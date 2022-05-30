@@ -1,0 +1,104 @@
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <set>
+#include <cstdio>
+#include <stack>
+using namespace std;
+
+int toNum(int n) {
+    int val = 1;
+    for (int i = 0; i < n; i++) {
+        val *= 10;
+    }
+    return val;
+}
+
+int Sum(int num, int size) {
+    int ret = 0;
+    for (int i = 0; i < size; i++) {
+        ret += num - (num / 10 * 10);
+        num /= 10;
+    }
+    return ret;
+}
+
+int Max(int num) {
+    int max = 0;
+    while (num != 0) {
+        if (num - (num / 10 * 10) > max) {
+            max = num - (num / 10 * 10);
+            if (max == 9)
+                break;
+        }
+        num /= 10;
+    }
+    return max;
+}
+
+string roman(unsigned num) {
+    if (!num || num > 3999U) return "Error: ovreflow value!"s;
+    const auto dec = 10U;
+    const string suite[][10U] = {
+        { ""s, "I"s, "II"s, "III"s, "IV"s, "V"s, "VI"s, "VII"s, "VIII"s, "IX"s},
+        { ""s, "X"s, "XX"s, "XXX"s, "XL"s, "L"s, "LX"s, "LXX"s, "LXXX"s, "XC"s},
+        { ""s, "C"s, "CC"s, "CCC"s, "CD"s, "D"s, "DC"s, "DCC"s, "DCCC"s, "CM"s},
+        { ""s, "M"s, "MM"s, "MMM"s}
+    };
+    stack<string> box;
+    auto i = 0U;
+    do {
+        auto x = num % dec;
+        box.push(suite[i][x]);
+        num /= dec;
+        ++i;
+    } while (num);
+    string res;
+    while (!box.empty()) {
+        res += box.top();
+        box.pop();
+    }
+    return res;
+}
+
+/*
+ * 
+ */
+int main() {
+    setlocale(LC_ALL, "Rus");
+    int n, k;
+    cout << "Введите сколько цыфр в числе: ";
+    cin >> n;
+    cout << "Введите число к: ";
+    cin >> k;
+    int max = toNum(n);
+    for (int i = (int) (max / 10); i < max; i++) {
+        if(Sum(i, n) == k){
+            cout << i << endl;
+        }
+    }
+    cout << "\n\n";
+    
+    
+    
+    int num, newNum;
+    cout << "Введите число: ";
+    cin >> num;
+    newNum = num / 10 * 10 + Max(num);
+    cout << "Новое число: " << newNum << "\n\n";
+    
+    
+    
+    string rn;
+    unsigned an; // 4 байта
+    cout << "Arabic: ";
+    cin >> an;
+    if (an >= 4000) {
+        cout << "слишком длинное число";
+        return 0;
+    }
+    rn = roman(an);
+    cout << "Roman: " << rn << '\n';
+    return 0;
+}

@@ -1,0 +1,64 @@
+#include <iostream>
+#include <iomanip> //для выравнивания
+#include <cmath>
+using namespace std;
+
+struct Coordinate{
+    double x;
+    double y;
+    Coordinate(){
+        x = 0;
+        y = 0;
+    }
+    Coordinate(double x, double y){
+        this->x = x;
+        this->y = y;
+    }
+};
+
+struct Otrezok{
+    Coordinate A;
+    Coordinate B;
+    Otrezok(){
+        A = Coordinate();
+        B = Coordinate();
+    }
+    Otrezok(Coordinate A, Coordinate B){
+        this->A = A;
+        this->B = B;
+    }
+};
+
+void SortX(Otrezok &otr){
+    if(otr.A.x > otr.B.x){
+        Coordinate C = otr.A;
+        otr.B = otr.A;
+        otr.A = C;
+    }
+}
+
+int main(int argc, char** argv) {
+    setlocale(LC_ALL, "Rus");
+    double Fx;
+    cout << "Введите кординаты отрезка (х,у): ";
+    Coordinate arr[2];
+    double x,y,h;
+    for(int i = 0; i < 2; i++){
+        cin >> x >> y;
+        arr[i] = Coordinate(x,y);
+    }
+    Otrezok otr(arr[0], arr[1]);
+    cout << "Введите х: ";
+    cin >> x;
+    cout << "Введите шаг h: ";
+    cin >> h;
+    SortX(otr);
+    cout << setw(5) << right << "X" << "   " << setw(6) << left << "F(x)" << endl;
+    while(x >= otr.A.x && x <= otr.B.x){
+        Fx = x*(sin(x));
+        cout << setw(5) << right << x << "   " << setw(6) << left << Fx << endl;
+        x += h;
+    }
+    return 0;
+}
+

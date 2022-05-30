@@ -1,0 +1,151 @@
+#include <iostream>
+#include <cstdio>
+#include <cmath>
+#include <set>
+using namespace std;
+
+struct Coordinate {
+    double x;
+    double y;
+    double z;
+
+    Coordinate(double x, double y, double z = 1) {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+
+    Coordinate() {
+        this->x = 0;
+        this->y = 0;
+        this->z = 1;
+    }
+};
+
+struct Otrezok {
+    Coordinate p1;
+    Coordinate p2;
+
+    Otrezok(Coordinate p1, Coordinate p2) {
+        this->p1 = p1;
+        this->p2 = p2;
+    }
+
+    Otrezok() {
+        this->p1 = Coordinate(0, 0);
+        this->p2 = Coordinate(0, 0);
+    }
+};
+
+struct Line {
+    double k;
+    double b;
+
+    Line(double k, double b = 0) {
+        this->k = k;
+        this->b = b;
+    }
+
+    Line() {
+        k = 0;
+        b = 0;
+    }
+};
+
+void Fun(double &k, double &b, Coordinate p1, Coordinate p2) {
+    k = (p2.y - p1.y) / (p2.x - p1.x);
+    b = p1.y - k * p1.x;
+}
+
+void SortMinMax(double &val1, double &val2) {//если val1 > val2 то поменять местами
+    if (val1 > val2) {
+        int val3 = val2;
+        val2 = val1;
+        val1 = val3;
+    }
+}
+
+bool FunPointOtr(Coordinate t, Otrezok otr) {
+    SortMinMax(otr.p1.x, otr.p2.x);
+    SortMinMax(otr.p1.y, otr.p2.y);
+    if (t.x >= otr.p1.x && t.x <= otr.p2.x && t.y >= otr.p1.y && t.y <= otr.p2.y)
+        return 1;
+    return 0;
+}
+
+bool Intersection(Line line, Otrezok otr, Coordinate &t) {
+    Line otrLine;
+    Fun(otrLine.k, otrLine.b, otr.p1, otr.p2);
+    t.x = (otrLine.b - line.b) / (line.k - otrLine.k);
+    if (isnan(t.x))
+        t.x = otr.p1.x;
+
+    t.y = line.k * t.x + line.b;
+    return FunPointOtr(t, otr);
+}
+
+/*
+ * 
+ */
+int main() {
+    setlocale(LC_ALL, "Rus");
+    int z;
+    cout << "Введите z: ";
+    cin >> z;
+    double val = pow(cos(sin(1.0 / z)), 2);
+    cout << "val = " << val << "\n\n";
+
+
+
+    int x, y;
+    cout << "Введите колчество кошек: ";
+    cin >> x;
+    cout << "Введите количетво часов: ";
+    cin >> y;
+    val = x*y;
+    cout << "они съедят: " << val << " мышей" << "\n\n";
+
+
+
+    int val1;
+    cout << "Введите 4-x значное число: ";
+    cin >> val1;
+    int sum=0, proiz=0;
+    sum = val1 / 1000 + (val1 - val1 / 1000 * 1000) / 100 + (val1 - val1 / 100 * 100) / 10 + val1 - val1 / 10 * 10;
+    proiz = (val1 / 1000) * ((val1 - val1 / 1000 * 1000) / 100) * ((val1 - val1 / 100 * 100) / 10) * (val1 - val1 / 10 * 10);
+    cout << ((sum - proiz == 1) ? "true" : "false") << "\n\n";
+
+
+
+    set<double> s;
+    Otrezok otr[8] = {Otrezok(Coordinate(4, 0), Coordinate(2, 0)),
+        Otrezok(Coordinate(2, 0), Coordinate(0, 2)),
+        Otrezok(Coordinate(0, 2), Coordinate(-2, 0)),
+        Otrezok(Coordinate(-2, 0), Coordinate(0, -2)),
+        Otrezok(Coordinate(0, -2), Coordinate(0, -4)),
+        Otrezok(Coordinate(0, -4), Coordinate(-4, 0)),
+        Otrezok(Coordinate(-4, 0), Coordinate(0, 4)),
+        Otrezok(Coordinate(0, 4), Coordinate(4, 0))};
+    cout << "Введите координаты точки через пробел: ";
+    Coordinate t;
+    scanf("%lf %lf", &t.x, &t.y);
+    Line tl(0, t.y);
+    Coordinate p;
+    for (int i = 0; i < 8; i++) {
+        if (Intersection(tl, otr[i], p)) {
+            s.insert(p.x);
+        }
+    }
+    set<double>::iterator it;
+    int num = 0;
+    for (it = s.begin(); it != s.end(); it++) {
+        if (*it > t.x)
+            num++;
+    }
+    cout << "Точка принадлежит фигуре: ";
+    if (num % 2 == 0)
+        cout << "false";
+    else
+        cout << "true";
+    return 0;
+}
